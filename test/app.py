@@ -61,7 +61,7 @@ class VideoTransformer(VideoTransformerBase):
 st.title('😊문제를 업로드해주세요~!!😊')
 
 # 이미지 소스 선택 옵션
-option = st.selectbox('이미지 소스를 선택하세요', ('이미지 소스 선택', '💾이미지 업로드💾', '📷카메라로 캡처하기📷'))
+option = st.selectbox('이미지 소스를 선택하세요', ('이미지 소스 선택', '이미지 업로드', '카메라로 캡처하기'))
 
 img = None
 
@@ -70,31 +70,24 @@ if option == '이미지 업로드':
     if uploaded_file is not None:
         img = Image.open(uploaded_file)
         img = np.array(img)
-    # Create two columns
-    col1, col2 = st.columns(2)
-    
+
 elif option == '카메라로 캡처하기':
     ctx = webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
 
     if st.button('캡처하기'):
         ctx.video_transformer.capture_enabled = True
         st.write('이미지가 캡처되었습니다.')
-    # Create two columns
-    col1, col2 = st.columns(2)
-    
+
     if ctx.video_transformer and ctx.video_transformer.saved_image is not None:
         img = ctx.video_transformer.saved_image
-
-
 
 # 이미지가 있는 경우 OpenCV 효과 적용
 if img is not None:
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     contrast_img = adjust_contrast(gray_img)
 
-    # In the first column, display the processed image
-    col1.image(contrast_img, caption='처리 후 이미지', use_column_width=True)
-
+    # 이미지 출력
+    st.image(contrast_img, caption='처리 후 이미지', use_column_width=True)
 
     # 이미지 저장
     cv2.imwrite('processed_image.jpg', contrast_img)
@@ -130,7 +123,7 @@ if img is not None:
 
     # Google Cloud Vision에서 얻은 텍스트 사용
 if option == '이미지 업로드' or option == '카메라로 캡처하기':
-    with col2.form(key='question_creation'):
+    with st.form(key='question_creation'):
         # "문제 생성" ボタン
         submit_button = st.form_submit_button('문제 생성')
         # Usage

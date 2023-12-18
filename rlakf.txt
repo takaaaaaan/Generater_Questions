@@ -1,0 +1,4 @@
+question = generate_questions(text, question_type, difficulty, topic)
+            st.write(f"Question: {question}")
+            answer = generate_answer(text, question)
+            st.write(f"Answer: {answer}")
